@@ -1,4 +1,4 @@
-package main
+package eval
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -6,23 +6,23 @@ import (
 )
 
 func TestWhenValidExpressionValidateReturnsTrue(t *testing.T) {
-	status := validateExpression("What is 5 multiplied by 7?")
+	status := ValidateExpression("What is 5 multiplied by 7?")
 	assert.Equal(t, status, NoError)
 }
 
 func TestDivisionByZero(t *testing.T) {
-	status := validateExpression("What is 5 multiplied by 7 divided by 0?")
+	status := ValidateExpression("What is 5 multiplied by 7 divided by 0?")
 	assert.Equal(t, status, ErrorDivisionByZero)
 }
 
 func TestComputeExpression(t *testing.T) {
-	result, status := computeExpression("What is 5 multiplied by 7?")
+	result, status := ComputeExpression("What is 5 multiplied by 7?")
 	assert.Equal(t, status, NoError)
 	assert.Equal(t, result, 35.0)
 }
 
 func TestComputeExpressionFloat(t *testing.T) {
-	result, status := computeExpression("What is 5 multiplied by 7 divided by 2?")
+	result, status := ComputeExpression("What is 5 multiplied by 7 divided by 2?")
 	assert.Equal(t, status, NoError)
 	assert.Equal(t, result, 17.5)
 }
