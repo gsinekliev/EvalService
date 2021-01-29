@@ -27,8 +27,28 @@ func SetupRouter() *gin.Engine {
 		json.Unmarshal(buf.Bytes(), &request)
 
 		fmt.Printf("[Evaluate] Body: %s", request.Expression)
+		result, status := computeExpression(request.Expression)
+		if status == NoError {
+			c.JSON(http.StatusOK, gin.H{"result": fmt.Sprintf("%.2f", result)})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"result": fmt.Sprintf("Bad Request:%s", status)})
+		}
+	})
 
-		c.JSON(http.StatusOK, gin.H{"result": request.Expression})
+	r.POST("/validate", func(c *gin.Context) {
+		request := Request{}
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(c.Request.Body)
+
+		json.Unmarshal(buf.Bytes(), &request)
+
+		fmt.Printf("[Evaluate] Body: %s", request.Expression)
+		status := validateExpression(request.Expression)
+		if status == NoError {
+			c.JSON(http.StatusOK, gin.H{"valid": "true"})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"valid": "false", "reason": status})
+		}
 	})
 	return r
 }

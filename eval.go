@@ -22,6 +22,11 @@ func computeExpression(expression string) (float64, Status) {
 	// What is 5 plus 6?
 	// What is 6 minus 2?
 	// What is 7 divided by 2?
+	status := validateExpression(expression)
+	if status != NoError {
+		return 0.0, status
+	}
+
 	var template = regexp.MustCompile(`What is ([a-z A-Z0-9]+)\?$`)
 	var numberExpression = template.FindStringSubmatch(expression)[1]
 
