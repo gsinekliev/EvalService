@@ -13,7 +13,6 @@ const (
 	ErrorNoQuestion              Status = "Expression must have the template 'What is <>?'"
 	ErrorInvalidNumberExpression Status = "Invalid number expression"
 	ErrorDivisionByZero          Status = "Error: Division by zero"
-	ErrorOther                   Status = "General Error"
 )
 
 func ComputeExpression(expression string) (float64, Status) {
@@ -37,28 +36,20 @@ func ComputeExpression(expression string) (float64, Status) {
 
 	var parts = strings.Split(numberExpression, " ")
 
-	var result float64 = 0.0
-	var operation = ""
-	for _, part := range parts {
-		if number, err := strconv.ParseFloat(part, 64); err == nil {
-			if operation == "" {
-				result = number
-			} else {
-				switch operation {
-				case "+":
-					result += number
-				case "-":
-					result -= number
-				case "*":
-					result *= number
-				case "/":
-					result /= number
-				}
-				operation = ""
-			}
-		} else {
-			// part is operation
-			operation = part
+	var result, _ = strconv.ParseFloat(parts[0], 64)
+
+	for i := 1; i < len(parts); i += 2 {
+		operation := parts[i]
+		operand, _ := strconv.ParseFloat(parts[i+1], 64)
+		switch operation {
+		case "+":
+			result += operand
+		case "-":
+			result -= operand
+		case "*":
+			result *= operand
+		case "/":
+			result /= operand
 		}
 	}
 
@@ -66,19 +57,19 @@ func ComputeExpression(expression string) (float64, Status) {
 }
 
 func ValidateExpression(expression string) Status {
-	// What is <number>(<operator> <number>)* ?
+	// What is <number> (<operator> <number>)* ?
 	// <operator> = plus|minus|multiplied by|divided by
 	// <number> = any integer
 	var template = regexp.MustCompile(`What is ([a-z A-Z0-9]+)\?$`)
 	var subTemplate = regexp.MustCompile(`\d+( (multiplied by|minus|plus|divided by) \d+)*`)
 	var matches = template.FindStringSubmatch(expression)
-	if len(matches) != 2 {
+	if len(matches) != 2 || len(matches[0]) != len(expression) {
 		return ErrorNoQuestion
 	}
 
 	subExpression := matches[1]
-	var isMatch = subTemplate.MatchString(subExpression)
-	if !isMatch {
+	var subExpressionMatches = subTemplate.FindStringSubmatch(subExpression)
+	if len(subExpressionMatches) < 1 || len(subExpressionMatches[0]) != len(subExpression) {
 		return ErrorInvalidNumberExpression
 	}
 
