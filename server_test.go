@@ -12,11 +12,11 @@ func TestWhenValidRequestEvalReturns200(t *testing.T) {
 	router := SetupRouter()
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/evaluate", strings.NewReader("my request"))
+	req, _ := http.NewRequest("POST", "/evaluate", strings.NewReader("{\"expression\":\"What is 5\"}"))
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, "my request", w.Body.String())
+	assert.Equal(t, "{\"result\":\"What is 5\"}", w.Body.String())
 }
 
 func TestInvalidEndpointReturns404(t *testing.T) {
