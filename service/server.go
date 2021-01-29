@@ -14,10 +14,6 @@ type Request struct {
 	Expression string `json:"expression"`
 }
 
-type Response struct {
-	Result string `json:"result"`
-}
-
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	errorStore := models.InitErrorStore()
