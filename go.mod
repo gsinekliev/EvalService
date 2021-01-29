@@ -1,4 +1,4 @@
-module github.com/gsinekliev/EvalService
+module github.com/gsinekliev/eval-service
 
 go 1.15
 
