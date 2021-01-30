@@ -25,3 +25,7 @@ func (store *ErrorStore) AddError(err Error) {
 		(*store)[key] = err
 	}
 }
+
+type Request struct {
+	Expression string `json:"expression"`
+}
