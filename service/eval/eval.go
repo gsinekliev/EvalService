@@ -16,13 +16,11 @@ const (
 )
 
 func ComputeExpression(expression string) (float64, Status) {
-	// What is 5?
-	// What is 5 multiplied by 10?
-	// What is 5 plus 6?
-	// What is 6 minus 2?
-	// What is 7 divided by 2?
-	status := ValidateExpression(expression)
-	if status != NoError {
+	// <expression> = What is <number> (<operator> <number>)*?
+	// <operator> = plus|minus|multiplied by|divided by
+	// <number> = any integer
+
+	if status := ValidateExpression(expression); status != NoError {
 		return 0.0, status
 	}
 
@@ -57,7 +55,7 @@ func ComputeExpression(expression string) (float64, Status) {
 }
 
 func ValidateExpression(expression string) Status {
-	// What is <number> (<operator> <number>)* ?
+	// <expression> = <number> (<operator> <number>)*
 	// <operator> = plus|minus|multiplied by|divided by
 	// <number> = any integer
 	var template = regexp.MustCompile(`What is ([a-z A-Z0-9]+)\?$`)
