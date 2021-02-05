@@ -11,6 +11,7 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	errorStore := models.InitErrorStore()
+	evaluator := eval.Evaluator{}
 	r.POST("/evaluate", func(c *gin.Context) {
 		request := models.Request{}
 		if err := c.ShouldBindJSON(&request); err != nil {
@@ -18,7 +19,7 @@ func SetupRouter() *gin.Engine {
 			return
 		}
 
-		result, status := eval.ComputeExpression(request.Expression)
+		result, status := evaluator.ComputeExpression(request.Expression)
 		if status == eval.NoError {
 			c.JSON(http.StatusOK, gin.H{"result": fmt.Sprintf("%.2f", result)})
 		} else {
@@ -35,12 +36,13 @@ func SetupRouter() *gin.Engine {
 
 	r.POST("/validate", func(c *gin.Context) {
 		request := models.Request{}
+		evaluator := eval.Evaluator{}
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"result": fmt.Sprintf("Invalid JSON: %v", err)})
 			return
 		}
 
-		status := eval.ValidateExpression(request.Expression)
+		status := evaluator.ValidateExpression(request.Expression)
 		if status == eval.NoError {
 			c.JSON(http.StatusOK, gin.H{"valid": "true"})
 		} else {

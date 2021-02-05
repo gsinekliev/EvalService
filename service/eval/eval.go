@@ -15,12 +15,19 @@ const (
 	ErrorDivisionByZero          Status = "Error: Division by zero"
 )
 
-func ComputeExpression(expression string) (float64, Status) {
+type IEvaluator interface {
+	ComputeExpression(string) (float64, Status)
+	ValidateExpression(string) bool
+}
+
+type Evaluator struct{}
+
+func (evaluator Evaluator) ComputeExpression(expression string) (float64, Status) {
 	// <expression> = What is <number> (<operator> <number>)*?
 	// <operator> = plus|minus|multiplied by|divided by
 	// <number> = any integer
 
-	if status := ValidateExpression(expression); status != NoError {
+	if status := evaluator.ValidateExpression(expression); status != NoError {
 		return 0.0, status
 	}
 
@@ -54,7 +61,7 @@ func ComputeExpression(expression string) (float64, Status) {
 	return result, NoError
 }
 
-func ValidateExpression(expression string) Status {
+func (evaluator Evaluator) ValidateExpression(expression string) Status {
 	// <expression> = <number> (<operator> <number>)*
 	// <operator> = plus|minus|multiplied by|divided by
 	// <number> = any integer
